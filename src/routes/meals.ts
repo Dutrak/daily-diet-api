@@ -43,3 +43,21 @@ export async function MealsRoutes(app: FastifyInstance) {
 
     return reply.code(200).send({ meals })
   })
+
+  app.withTypeProvider<ZodTypeProvider>().get('/:id', {
+    schema: {
+      params: z.object({
+        id: z.string().uuid()
+      })
+    },
+  }, async (request, reply) => {
+    const { id } = request.params
+
+    const meal = await knex('meals')
+      .select('id', 'name', 'description', 'date', 'is_on_diet')
+      .where('id', id)
+      .first()
+    
+    return reply.code(200).send({meal})
+  })
+}
