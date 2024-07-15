@@ -95,6 +95,7 @@ export async function MealsRoutes(app: FastifyInstance) {
 
     reply.code(204).send()
   })
+
   app.withTypeProvider<ZodTypeProvider>().delete('/:id', {
     schema: {
       params: z.object({
