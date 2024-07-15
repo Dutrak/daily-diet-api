@@ -91,4 +91,25 @@ export async function MealsRoutes(app: FastifyInstance) {
 
     reply.code(204).send()
   })
+  app.withTypeProvider<ZodTypeProvider>().delete('/:id', {
+    schema: {
+      params: z.object({
+        id: z.string().uuid()
+      }),
+    },
+    preHandler: [checkSessionId]
+  }, async (request, reply) => {
+    const { id } = request.params
+
+    const meal = await knex('meals')
+      .delete()
+      .where('id', id)
+      .andWhere('user_id', request.user.id)
+    
+    if (!meal) {
+      return reply.code(404).send("Meal not found")
+    }
+
+    reply.code(204).send()
+  })
 }
