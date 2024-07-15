@@ -48,13 +48,19 @@ export async function MealsRoutes(app: FastifyInstance) {
         id: z.string().uuid()
       })
     },
+    preHandler: [checkSessionId]
   }, async (request, reply) => {
     const { id } = request.params
 
     const meal = await knex('meals')
       .select('id', 'name', 'description', 'date', 'is_on_diet')
       .where('id', id)
+      .andWhere('user_id', request.user.id)
       .first()
+    
+    if (!meal) {
+      return reply.code(404).send("Meal not found")
+    }
     
     return reply.code(200).send({meal})
   })
