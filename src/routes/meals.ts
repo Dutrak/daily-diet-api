@@ -28,9 +28,7 @@ export async function MealsRoutes(app: FastifyInstance) {
       is_on_diet,
       user_id: request.user.id
     })
-
     reply.code(201).send()
-
   })
 
   app.withTypeProvider<ZodTypeProvider>().get("/", {
