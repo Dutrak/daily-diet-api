@@ -31,7 +31,7 @@ export async function MealsRoutes(app: FastifyInstance) {
     reply.code(201).send()
   })
 
-  app.withTypeProvider<ZodTypeProvider>().get("/", {
+  app.get("/", {
     preHandler: [checkSessionId]
   }, async (request, reply) => {
 
