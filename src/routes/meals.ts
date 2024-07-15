@@ -60,4 +60,35 @@ export async function MealsRoutes(app: FastifyInstance) {
     
     return reply.code(200).send({meal})
   })
+
+  app.withTypeProvider<ZodTypeProvider>().put('/:id', {
+    schema: {
+      params: z.object({
+        id: z.string().uuid()
+      }),
+      body: z.object({
+        name: z.string().min(4).optional(),
+        description: z.string().min(6).optional(),
+        date: z.coerce.number().int().optional(),
+        is_on_diet: z.boolean().optional(),
+      })
+    },
+    preHandler: [checkSessionId]
+  }, async (request, reply) => {
+    const { name, description, date, is_on_diet } = request.body
+    const { id } = request.params
+
+    const meal = await knex('meals').update({
+      name,
+      description,
+      date,
+      is_on_diet
+    }).where('id', id).andWhere('user_id', request.user.id)
+
+    if (!meal) {
+      return reply.code(404).send("Meal not found")
+    }
+
+    reply.code(204).send()
+  })
 }
