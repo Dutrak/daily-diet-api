@@ -153,6 +153,10 @@ export async function MealsRoutes(app: FastifyInstance) {
       if (!meal.is_on_diet) {
         totalMealsOnDietSequence.bestSequence = totalMealsOnDietSequence.currentSequence
         totalMealsOnDietSequence.currentSequence = 0
+
+        if (index === meals.length - 1) {
+          return 
+        }
       }
 
       if (index === meals.length - 1) {
