@@ -13,9 +13,10 @@ const MealBodySchema = z.object({
 })
 
 export async function MealsRoutes(app: FastifyInstance) {
+
+  app.addHook('preHandler', checkSessionId)
   
   app.withTypeProvider<ZodTypeProvider>().post("/", {
-    preHandler: [checkSessionId],
     schema: { body: MealBodySchema }
   }, async (request, reply) => {
     const { name, description, date, is_on_diet } = request.body
@@ -31,9 +32,7 @@ export async function MealsRoutes(app: FastifyInstance) {
     reply.code(201).send()
   })
 
-  app.get("/", {
-    preHandler: [checkSessionId]
-  }, async (request, reply) => {
+  app.get("/", async (request, reply) => {
 
     const meals = await knex('meals')
       .select('id', 'name', 'description', 'date', 'is_on_diet')
@@ -50,7 +49,6 @@ export async function MealsRoutes(app: FastifyInstance) {
         id: z.string().uuid()
       })
     },
-    preHandler: [checkSessionId]
   }, async (request, reply) => {
     const { id } = request.params
 
@@ -79,7 +77,6 @@ export async function MealsRoutes(app: FastifyInstance) {
         is_on_diet: z.boolean().optional(),
       })
     },
-    preHandler: [checkSessionId]
   }, async (request, reply) => {
     const { name, description, date, is_on_diet } = request.body
     const { id } = request.params
@@ -104,7 +101,6 @@ export async function MealsRoutes(app: FastifyInstance) {
         id: z.string().uuid()
       }),
     },
-    preHandler: [checkSessionId]
   }, async (request, reply) => {
     const { id } = request.params
 
@@ -120,9 +116,7 @@ export async function MealsRoutes(app: FastifyInstance) {
     reply.code(204).send()
   })
 
-  app.get("/summary", {
-    preHandler: [checkSessionId]
-  }, async (request, reply) => {
+  app.get("/summary", async (request, reply) => {
 
     const meals = await knex('meals')
       .select()
