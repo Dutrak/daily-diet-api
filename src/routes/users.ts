@@ -33,4 +33,24 @@ export async function UsersRoutes(app: FastifyInstance) {
     const users = await knex('users').select()
     reply.code(200).send({users})
   })
+
+  app.withTypeProvider<ZodTypeProvider>().post("/login", {
+    schema: { body: UserBodySchema }
+  }, async (request, reply) => { 
+    const { name, email } = request.body
+
+    const user = await knex('users')
+      .where('email', email)
+      .andWhere('name', name)
+      .first()
+    
+    if (!user) {
+      return reply.code(404).send("User not found.")
+    }
+    
+    return reply.cookie('sessionId', user.session_id, {
+      path: "/",
+      maxAge: 60 * 60 * 24, // 1 day
+    }).code(204).send()
+  })
 }
