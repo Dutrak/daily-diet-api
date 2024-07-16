@@ -38,6 +38,8 @@ export async function MealsRoutes(app: FastifyInstance) {
     const meals = await knex('meals')
       .select('id', 'name', 'description', 'date', 'is_on_diet')
       .where('user_id', request.user.id)
+      .orderBy('date', 'desc')
+      .orderBy('created_at')
 
     return reply.code(200).send({ meals })
   })
