@@ -50,4 +50,22 @@ describe('Users Routes', () => {
       })
     ])
   })
+
+  it('should be able login with name and email', async () => {
+    await request(app.server)
+      .post('/users')
+      .send({
+        name: 'John Doe',
+        email: 'Jhondoe@example.com'
+      })
+      .expect(201)
+
+    await request(app.server)
+      .post('/users/login')
+      .send({
+        name: 'John Doe',
+        email: 'Jhondoe@example.com'
+      })
+      .expect(204)
+  })
 }) 
